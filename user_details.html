@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>User Details</title>
+</head>
+
+<body>
+    <section>
+        <div class="card">
+            <div class="top">
+                <span id="username">Username</span>
+                <i class="bx bx-dots-vertical-rounded"></i>
+                <p>My Portfolio</p>
+            </div>
+
+            <div class="middle">
+                <div class="left">
+                    <img id="userPhoto" src="" alt="User Photo">
+                </div>
+                <div class="right">
+                    <label for="">Skills:</label>
+                    <div>
+                        <ul id="skillsList">
+                            <li id="skill1">Skill 1</li>
+                            <li id="skill2">Skill 2</li>
+                            <li id="skill3">Skill 3</li>
+                        </ul>
+                    </div>
+                    <div class="social-icon">
+                        <span><a id="facebookLink" href="#"><i class="bx bxl-facebook"></i></a></span>
+                        <span><a id="linkedinLink" href="#"><i class="bx bxl-linkedin"></i></a></span>
+                        <span><a id="instagramLink" href="#"><i class="bx bxl-instagram"></i></a></span>
+                        <span><a id="githubLink" href="#"><i class="bx bxl-github"></i></a></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <input type="button" id="hireButton" class="btn" value="Hire">
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Function to get the URL parameters
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Fetch user details based on the URL parameter 'id'
+        const userId = getUrlParam('id');
+        if (userId) {
+            fetch('https://store-20747-default-rtdb.firebaseio.com/userdata/' + userId + '.json')
+                .then(response => response.json())
+                .then(user => {
+                    if (user) {
+                        document.getElementById('username').innerText = user.username || 'Username';
+                        document.getElementById('userPhoto').src = user.photoUrl || '';
+                        document.getElementById('skill1').innerText = user.skill1 || 'Skill 1';
+                        document.getElementById('skill2').innerText = user.skill2 || 'Skill 2';
+                        document.getElementById('skill3').innerText = user.skill3 || 'Skill 3';
+                        document.getElementById('facebookLink').href = user.facebookLink || '#';
+                        document.getElementById('linkedinLink').href = user.linkedinLink || '#';
+                        document.getElementById('instagramLink').href = user.instagramLink || '#';
+                        document.getElementById('githubLink').href = user.githubLink || '#';
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        } else {
+            console.error('User ID not found in URL parameter.');
+        }
+
+        // Add click event listener to "Hire" button to redirect to Instagram URL
+        const hireButton = document.getElementById('hireButton');
+        hireButton.addEventListener('click', () => {
+            const instagramLink = document.getElementById('instagramLink').href;
+            if (instagramLink !== '#') {
+                window.location.href = instagramLink;
+            }
+        });
+    </script>
+</body>
+
+</html>

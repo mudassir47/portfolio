@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-info {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .user-info img {
+            max-width: 150px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">User Data</div>
+        <div id="userList">
+            <!-- User data will be displayed here dynamically -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+        const firebaseConfig = {
+            // ... (Your Firebase configuration) ...
+            apiKey: "AIzaSyBDVAANoalIc881f47H6XDaVVXnMMvW24w",
+    authDomain: "store-20747.firebaseapp.com",
+    databaseURL: "https://store-20747-default-rtdb.firebaseio.com",
+    projectId: "store-20747",
+    storageBucket: "store-20747.appspot.com",
+    messagingSenderId: "577093194329",
+    appId: "1:577093194329:web:57eb40748d1aefe0151748",
+    measurementId: "G-4D9H3VCFJ6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const userListDiv = document.getElementById('userList');
+
+        // Function to display user data
+        function displayUserData(usersData) {
+            userListDiv.innerHTML = '';
+            for (const key in usersData) {
+                const user = usersData[key];
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('user-info');
+                userDiv.innerHTML = `
+                    <p>Username: ${user.username}</p>
+                    <p>Email: ${user.email}</p>
+                    <p>Instagram Link: ${user.instagramLink || 'N/A'}</p>
+                    <p>GitHub Link: ${user.githubLink || 'N/A'}</p>
+                    <p>LinkedIn Link: ${user.linkedinLink || 'N/A'}</p>
+                    <p>Facebook Link: ${user.facebookLink || 'N/A'}</p>
+                    <p>Skills:</p>
+                    <ul>
+                        <li>${user.skill1 || 'N/A'}</li>
+                        <li>${user.skill2 || 'N/A'}</li>
+                        <li>${user.skill3 || 'N/A'}</li>
+                    </ul>
+                    <p><img src="${user.photoUrl || 'https://via.placeholder.com/150'}" alt="User Photo"></p>
+                    <a href="user_details.html?id=${key}">View Details</a> <!-- Add link to user details page -->
+                `;
+                userListDiv.appendChild(userDiv);
+            }
+        }
+
+        // Retrieve and display user data from Firebase
+        const usersRef = ref(database, 'userdata');
+        onValue(usersRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const usersData = snapshot.val();
+                displayUserData(usersData);
+            } else {
+                userListDiv.innerHTML = '<p>No user data available.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>
