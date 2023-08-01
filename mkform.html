@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>User portfolio Registration</title>
     <style>
         body {
             margin: 0;
@@ -139,13 +139,41 @@
         const database = getDatabase(app);
         const storage = getStorage(app);
 
+        // Function to handle image cropping to 1:1 aspect ratio
+        function cropImageToSquare(file, callback) {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const size = Math.min(img.width, img.height);
+                canvas.width = size;
+                canvas.height = size;
+                ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, size, size);
+                canvas.toBlob(callback, file.type);
+            };
+        }
+
+        // Event listener for form submission
         const form = document.getElementById('form');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            uplod();
+            const photoFile = document.getElementById('photo').files[0];
+
+            // Crop the photo to a 1:1 aspect ratio before uploading
+            cropImageToSquare(photoFile, (croppedBlob) => {
+                // Replace the original photo file with the cropped one
+                const croppedFile = new File([croppedBlob], photoFile.name, {
+                    type: photoFile.type,
+                    lastModified: photoFile.lastModified,
+                });
+
+                // Call the existing 'uplod' function with the cropped file
+                uplod(croppedFile);
+            });
         });
 
-        function uplod() {
+        function uplod(photoFile) {
             const user = document.getElementById('username').value;
             const instagramLink = document.getElementById('instagramLink').value;
             const githubLink = document.getElementById('githubLink').value;
@@ -154,7 +182,6 @@
             const skill1 = document.getElementById('skill1').value;
             const skill2 = document.getElementById('skill2').value;
             const skill3 = document.getElementById('skill3').value;
-            const photoFile = document.getElementById('photo').files[0];
 
             // Upload the photoFile to Firebase Storage
             const storageRefVar = storageRef(storage, 'photos/' + photoFile.name);
