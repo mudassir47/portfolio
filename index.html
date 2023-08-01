@@ -4,25 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>User Data</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             background-color: #f1f1f1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             font-family: Arial, Helvetica, sans-serif;
         }
 
         .container {
+            max-width: 800px;
+            margin: 20px auto;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            width: 400px;
+            padding: 20px;
         }
 
         .title {
@@ -30,97 +27,33 @@
             font-weight: bold;
             margin-bottom: 20px;
             text-align: center;
-            color: #8d60ed;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
+        .user-info {
             border: 1px solid #ccc;
             border-radius: 5px;
-        }
-
-        .button1 {
-            background-color: #8d60ed;
-            color: #fff;
-            font-size: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
             padding: 10px;
-            width: 100%;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
         }
 
-        .button1:hover {
-            background-color: #7a4ece;
+        .user-info img {
+            max-width: 150px;
+            border-radius: 5px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="title">User Registration</div>
-        <form id="form" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" placeholder="username" id="username">
-            </div>
-            <div class="form-group">
-                <label for="photo">Upload Photo</label>
-                <input type="file" accept="image/*" id="photo">
-            </div>
-            <div class="form-group">
-                <label for="instagramLink">Instagram Link</label>
-                <input type="text" placeholder="https://www.instagram.com/your_username" id="instagramLink">
-            </div>
-            <div class="form-group">
-                <label for="githubLink">GitHub Link</label>
-                <input type="text" placeholder="https://github.com/your_username" id="githubLink">
-            </div>
-            <div class="form-group">
-                <label for="linkedinLink">LinkedIn Link</label>
-                <input type="text" placeholder="https://www.linkedin.com/in/your_username" id="linkedinLink">
-            </div>
-            <div class="form-group">
-                <label for="facebookLink">Facebook Link</label>
-                <input type="text" placeholder="https://www.facebook.com/your_username" id="facebookLink">
-            </div>
-            <div class="form-group">
-                <label for="skill1">Skill 1</label>
-                <input type="text" placeholder="Skill 1" id="skill1">
-            </div>
-            <div class="form-group">
-                <label for="skill2">Skill 2</label>
-                <input type="text" placeholder="Skill 2" id="skill2">
-            </div>
-            <div class="form-group">
-                <label for="skill3">Skill 3</label>
-                <input type="text" placeholder="Skill 3" id="skill3">
-            </div>
-            <div>
-                <button class="button1" type="submit">Submit</button>
-            </div>
-        </form>
+        <div class="title">User Data</div>
+        <div id="userList">
+            <!-- User data will be displayed here dynamically -->
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
         const firebaseConfig = {
             // ... (Your Firebase configuration) ...
@@ -137,54 +70,46 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-        const storage = getStorage(app);
 
-        const form = document.getElementById('form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            uplod();
-        });
+        const userListDiv = document.getElementById('userList');
 
-        function uplod() {
-            const user = document.getElementById('username').value;
-            const instagramLink = document.getElementById('instagramLink').value;
-            const githubLink = document.getElementById('githubLink').value;
-            const linkedinLink = document.getElementById('linkedinLink').value;
-            const facebookLink = document.getElementById('facebookLink').value;
-            const skill1 = document.getElementById('skill1').value;
-            const skill2 = document.getElementById('skill2').value;
-            const skill3 = document.getElementById('skill3').value;
-            const photoFile = document.getElementById('photo').files[0];
-
-            // Upload the photoFile to Firebase Storage
-            const storageRefVar = storageRef(storage, 'photos/' + photoFile.name);
-            uploadBytes(storageRefVar, photoFile).then((snapshot) => {
-                // Get the URL of the uploaded photo
-                getDownloadURL(snapshot.ref).then((photoUrl) => {
-                    // Save user data and photo URL to the real-time database
-                    const reff = ref(database, 'userdata');
-                    push(reff, {
-                        username: user,
-                        instagramLink: instagramLink,
-                        githubLink: githubLink,
-                        linkedinLink: linkedinLink,
-                        facebookLink: facebookLink,
-                        skill1: skill1,
-                        skill2: skill2,
-                        skill3: skill3,
-                        photoUrl: photoUrl
-                    }).then(() => {
-                        console.log("Data added successfully");
-                    }).catch((error) => {
-                        alert(`Failed to add data ${error}`);
-                    });
-                }).catch((error) => {
-                    alert(`Failed to get photo URL ${error}`);
-                });
-            }).catch((error) => {
-                alert(`Failed to upload photo ${error}`);
-            });
+        // Function to display user data
+        function displayUserData(usersData) {
+            userListDiv.innerHTML = '';
+            for (const key in usersData) {
+                const user = usersData[key];
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('user-info');
+                userDiv.innerHTML = `
+                    <p>Username: ${user.username}</p>
+                    <p>Email: ${user.email}</p>
+                    <p>Instagram Link: ${user.instagramLink || 'N/A'}</p>
+                    <p>GitHub Link: ${user.githubLink || 'N/A'}</p>
+                    <p>LinkedIn Link: ${user.linkedinLink || 'N/A'}</p>
+                    <p>Facebook Link: ${user.facebookLink || 'N/A'}</p>
+                    <p>Skills:</p>
+                    <ul>
+                        <li>${user.skill1 || 'N/A'}</li>
+                        <li>${user.skill2 || 'N/A'}</li>
+                        <li>${user.skill3 || 'N/A'}</li>
+                    </ul>
+                    <p><img src="${user.photoUrl || 'https://via.placeholder.com/150'}" alt="User Photo"></p>
+                    <a href="user_details.html?id=${key}">View Details</a> <!-- Add link to user details page -->
+                `;
+                userListDiv.appendChild(userDiv);
+            }
         }
+
+        // Retrieve and display user data from Firebase
+        const usersRef = ref(database, 'userdata');
+        onValue(usersRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const usersData = snapshot.val();
+                displayUserData(usersData);
+            } else {
+                userListDiv.innerHTML = '<p>No user data available.</p>';
+            }
+        });
     </script>
 </body>
 
