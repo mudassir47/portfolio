@@ -16,7 +16,7 @@
         .container {
             max-width: 800px;
             margin: 20px auto;
-            background-color: #fff;
+            background-color: #f9f9f9;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             padding: 20px;
@@ -27,18 +27,57 @@
             font-weight: bold;
             margin-bottom: 20px;
             text-align: center;
+            color: #8d60ed;
         }
 
         .user-info {
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .user-info img {
             max-width: 150px;
             border-radius: 5px;
+            display: block;
+            margin: 10px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        .user-info ul {
+            padding-left: 20px;
+            margin: 10px 0;
+            list-style-type: disc;
+        }
+
+        .user-info a {
+            display: inline-block;
+            background-color: #8d60ed;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .user-info a:hover {
+            background-color: #7a4ece;
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 18px;
+            color: #777;
+            margin-top: 30px;
         }
     </style>
 </head>
