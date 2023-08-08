@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>User Details</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
@@ -43,6 +44,7 @@
 
             <div class="bottom">
                 <input type="button" id="hireButton" class="btn" value="Hire">
+                <input type="button" id="downloadButton" class="btn" value="Download Portfolio">
             </div>
         </div>
     </section>
@@ -84,6 +86,25 @@
             if (instagramLink !== '#') {
                 window.location.href = instagramLink;
             }
+        });
+
+        // Add click event listener to "Download Portfolio" button
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.addEventListener('click', () => {
+            // Use html2pdf library to generate PDF
+            const cardElement = document.querySelector('.card');
+            const opt = {
+                margin: 10,
+                filename: 'portfolio.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf()
+                .from(cardElement)
+                .set(opt)
+                .save();
         });
     </script>
 </body>
